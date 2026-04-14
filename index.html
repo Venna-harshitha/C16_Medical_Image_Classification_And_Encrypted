@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FHE Medical Diagnosis System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo-section">
+                <div class="lock-icon">
+                    <i class="fas fa-shield-virus"></i>
+                </div>
+                <h1>SecureHealth AI</h1>
+                <p class="subtitle">Fully Homomorphic Encrypted Medical Diagnosis</p>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Patient Information Form -->
+            <div class="patient-form-card">
+                <div class="card-header">
+                    <i class="fas fa-user-md"></i>
+                    <h2>Patient Information</h2>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="patientName">
+                            <i class="fas fa-user"></i>
+                            Full Name
+                        </label>
+                        <input type="text" id="patientName" placeholder="Enter patient name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="patientAge">
+                            <i class="fas fa-calendar-alt"></i>
+                            Age
+                        </label>
+                        <input type="number" id="patientAge" placeholder="Age" min="1" max="120" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="patientGender">
+                            <i class="fas fa-venus-mars"></i>
+                            Gender
+                        </label>
+                        <select id="patientGender" required>
+                            <option value="">Select Gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Upload Section -->
+            <div class="upload-card">
+                <div class="card-header">
+                    <i class="fas fa-x-ray"></i>
+                    <h2>Chest X-ray Upload</h2>
+                </div>
+                
+                <div class="file-upload-wrapper">
+                    <input type="file" id="fileInput" accept="image/*" class="file-input">
+                    <label for="fileInput" class="file-label">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <span>Choose X-ray Image</span>
+                        <small>Supported: JPG, PNG, DICOM</small>
+                    </label>
+                    <div id="fileName" class="file-name"></div>
+                </div>
+
+                <div class="encryption-section">
+                    <div class="encryption-wrapper">
+                        <i class="fas fa-key"></i>
+                        <input type="password" id="encryptionKey" placeholder="Enter encryption key (minimum 8 characters)">
+                        <i class="fas fa-eye-slash toggle-password" id="togglePassword"></i>
+                    </div>
+                    <small class="encryption-hint">
+                        <i class="fas fa-info-circle"></i>
+                        Your encryption key ensures end-to-end privacy
+                    </small>
+                </div>
+
+                <button id="analyzeBtn" class="analyze-btn" disabled>
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Start Encrypted Analysis</span>
+                </button>
+            </div>
+
+            <!-- Image Preview -->
+            <div id="imagePreview" class="image-preview-card" style="display: none;">
+                <div class="card-header">
+                    <i class="fas fa-image"></i>
+                    <h3>X-ray Preview</h3>
+                </div>
+                <img id="previewImg" alt="X-ray preview">
+            </div>
+
+            <!-- Processing Status -->
+            <div id="processingSection" class="processing-section" style="display: none;">
+                <div class="processing-header">
+                    <i class="fas fa-cog fa-spin"></i>
+                    <h2>Processing Your X-ray</h2>
+                </div>
+                
+                <div class="processing-steps">
+                    <div class="step" id="step1">
+                        <div class="step-icon">
+                            <i class="fas fa-lock"></i>
+                        </div>
+                        <div class="step-content">
+                            <h4>Encrypting Image</h4>
+                            <p>Applying homomorphic encryption...</p>
+                        </div>
+                        <div class="step-status">
+                            <i class="fas fa-spinner fa-spin"></i>
+                        </div>
+                    </div>
+
+                    <div class="step" id="step2">
+                        <div class="step-icon">
+                            <i class="fas fa-server"></i>
+                        </div>
+                        <div class="step-content">
+                            <h4>Secure Transmission</h4>
+                            <p>Sending encrypted data to server...</p>
+                        </div>
+                        <div class="step-status">
+                            <i class="fas fa-circle"></i>
+                        </div>
+                    </div>
+
+                    <div class="step" id="step3">
+                        <div class="step-icon">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <div class="step-content">
+                            <h4>CNN Feature Extraction</h4>
+                            <p>Extracting features on encrypted data...</p>
+                        </div>
+                        <div class="step-status">
+                            <i class="fas fa-circle"></i>
+                        </div>
+                    </div>
+
+                    <div class="step" id="step4">
+                        <div class="step-icon">
+                            <i class="fas fa-calculator"></i>
+                        </div>
+                        <div class="step-content">
+                            <h4>Polynomial Classification</h4>
+                            <p>Running FHE-compatible inference...</p>
+                        </div>
+                        <div class="step-status">
+                            <i class="fas fa-circle"></i>
+                        </div>
+                    </div>
+
+                    <div class="step" id="step5">
+                        <div class="step-icon">
+                            <i class="fas fa-unlock"></i>
+                        </div>
+                        <div class="step-content">
+                            <h4>Decrypting Results</h4>
+                            <p>Decrypting diagnosis on client side...</p>
+                        </div>
+                        <div class="step-status">
+                            <i class="fas fa-circle"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="performance-metrics" id="perfMetrics" style="display: none;">
+                    <h4><i class="fas fa-tachometer-alt"></i> Performance Metrics</h4>
+                    <div class="metrics-grid">
+                        <div class="metric">
+                            <span class="metric-label">Preprocessing</span>
+                            <span class="metric-value" id="metricPreprocess">-</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">CNN Inference</span>
+                            <span class="metric-value" id="metricCNN">-</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">FHE Inference</span>
+                            <span class="metric-value" id="metricFHE">-</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Total Time</span>
+                            <span class="metric-value" id="metricTotal">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div id="resultsSection" class="results-section" style="display: none;">
+                <!-- Patient Info Summary -->
+                <div class="patient-summary-card">
+                    <div class="patient-avatar">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <div class="patient-details">
+                        <h3 id="resultPatientName">-</h3>
+                        <div class="patient-meta">
+                            <span><i class="fas fa-birthday-cake"></i> <span id="resultPatientAge">-</span> years</span>
+                            <span><i class="fas fa-venus-mars"></i> <span id="resultPatientGender">-</span></span>
+                        </div>
+                    </div>
+                    <div class="report-date">
+                        <i class="fas fa-calendar-check"></i>
+                        <span id="reportDate">-</span>
+                    </div>
+                </div>
+
+                <!-- Diagnosis Card -->
+                <div class="diagnosis-result-card" id="diagnosisCard">
+                    <div class="diagnosis-header">
+                        <div class="diagnosis-icon" id="diagnosisIcon">
+                            <i class="fas fa-heartbeat"></i>
+                        </div>
+                        <div class="diagnosis-title">
+                            <h2>Diagnosis Result</h2>
+                            <span class="urgency-badge" id="urgencyBadge">-</span>
+                        </div>
+                    </div>
+                    
+                    <div class="diagnosis-main">
+                        <h1 id="diagnosisName">-</h1>
+                        <p class="diagnosis-description" id="diagnosisDescription">-</p>
+                        <div class="confidence-display">
+                            <div class="confidence-label">Confidence Level</div>
+                            <div class="confidence-bar-wrapper">
+                                <div class="confidence-bar-fill" id="confidenceBar"></div>
+                            </div>
+                            <div class="confidence-percentage" id="confidencePercentage">-</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Possible Reasons -->
+                <div class="info-card">
+                    <div class="info-header">
+                        <i class="fas fa-question-circle"></i>
+                        <h3>Possible Causes & Risk Factors</h3>
+                    </div>
+                    <ul class="info-list" id="reasonsList"></ul>
+                </div>
+
+                <!-- Precautions & Recommendations -->
+                <div class="info-card precautions-card">
+                    <div class="info-header">
+                        <i class="fas fa-notes-medical"></i>
+                        <h3>Recommended Precautions & Actions</h3>
+                    </div>
+                    <ul class="info-list precautions-list" id="precautionsList"></ul>
+                </div>
+
+                <!-- Model Comparison -->
+                <div class="comparison-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-chart-bar"></i>
+                        Model Performance Comparison
+                    </h3>
+                    
+                    <div class="models-grid">
+                        <!-- FHE Model -->
+                        <div class="model-card fhe-model">
+                            <div class="model-header">
+                                <i class="fas fa-lock"></i>
+                                <h4>FHE Polynomial Model</h4>
+                                <span class="model-badge">Encrypted</span>
+                            </div>
+                            <div class="model-prediction">
+                                <div class="pred-class" id="fheClass">-</div>
+                                <div class="pred-confidence" id="fheConfidence">-</div>
+                            </div>
+                            <div class="probability-breakdown">
+                                <div class="prob-item">
+                                    <span class="prob-label">Cardiomegaly</span>
+                                    <div class="prob-bar">
+                                        <div class="prob-fill fhe-fill" id="fheProb0"></div>
+                                    </div>
+                                    <span class="prob-value" id="fheVal0">0%</span>
+                                </div>
+                                <div class="prob-item">
+                                    <span class="prob-label">Normal</span>
+                                    <div class="prob-bar">
+                                        <div class="prob-fill fhe-fill" id="fheProb1"></div>
+                                    </div>
+                                    <span class="prob-value" id="fheVal1">0%</span>
+                                </div>
+                                <div class="prob-item">
+                                    <span class="prob-label">Pneumonia</span>
+                                    <div class="prob-bar">
+                                        <div class="prob-fill fhe-fill" id="fheProb2"></div>
+                                    </div>
+                                    <span class="prob-value" id="fheVal2">0%</span>
+                                </div>
+                                <div class="prob-item">
+                                    <span class="prob-label">Tuberculosis</span>
+                                    <div class="prob-bar">
+                                        <div class="prob-fill fhe-fill" id="fheProb3"></div>
+                                    </div>
+                                    <span class="prob-value" id="fheVal3">0%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Standard CNN Model -->
+                        <div class="model-card cnn-model">
+                            <div class="model-header">
+                                <i class="fas fa-network-wired"></i>
+                                <h4>Standard CNN Model</h4>
+                                <span class="model-badge">Plaintext</span>
+                            </div>
+                            <div class="model-prediction">
+                                <div class="pred-class" id="cnnClass">-</div>
+                                <div class="pred-confidence" id="cnnConfidence">-</div>
+                            </div>
+                            <div class="probability-breakdown">
+                                <div class="prob-item">
+                                    <span class="prob-label">Cardiomegaly</span>
+                                    <div class="prob-bar">
+                                        <div class="prob-fill cnn-fill" id="cnnProb0"></div>
+                                    </div>
+                                    <span class="prob-value" id="cnnVal0">0%</span>
+                                </div>
+                                <div class="prob-item">
+                                    <span class="prob-label">Normal</span>
+                                    <div class="prob-bar">
+                                        <div class="prob-fill cnn-fill" id="cnnProb1"></div>
+                                    </div>
+                                    <span class="prob-value" id="cnnVal1">0%</span>
+                                </div>
+                                <div class="prob-item">
+                                    <span class="prob-label">Pneumonia</span>
+                                    <div class="prob-bar">
+                                        <div class="prob-fill cnn-fill" id="cnnProb2"></div>
+                                    </div>
+                                    <span class="prob-value" id="cnnVal2">0%</span>
+                                </div>
+                                <div class="prob-item">
+                                    <span class="prob-label">Tuberculosis</span>
+                                    <div class="prob-bar">
+                                        <div class="prob-fill cnn-fill" id="cnnProb3"></div>
+                                    </div>
+                                    <span class="prob-value" id="cnnVal3">0%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Privacy Notice -->
+                <div class="privacy-notice">
+                    <i class="fas fa-shield-alt"></i>
+                    <div>
+                        <h4>Your Privacy is Protected</h4>
+                        <p>All analysis was performed using Fully Homomorphic Encryption. The server never had access to your unencrypted medical images. Your encryption key remained on your device throughout the entire process.</p>
+                    </div>
+                </div>
+
+                <!-- Disclaimer -->
+                <div class="disclaimer">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <div>
+                        <h4>Medical Disclaimer</h4>
+                        <p>This AI-powered diagnosis is for informational purposes only and should not replace professional medical advice. Please consult with a qualified healthcare provider for proper diagnosis and treatment. If you're experiencing a medical emergency, call your local emergency services immediately.</p>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button class="btn-secondary" onclick="window.print()">
+                        <i class="fas fa-print"></i>
+                        Print Report
+                    </button>
+                    <button class="btn-secondary" onclick="downloadReport()">
+                        <i class="fas fa-download"></i>
+                        Download PDF
+                    </button>
+                    <button class="btn-primary" onclick="resetApp()">
+                        <i class="fas fa-redo"></i>
+                        New Analysis
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
